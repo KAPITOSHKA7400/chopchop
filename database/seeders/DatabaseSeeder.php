@@ -13,11 +13,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Создаём пользователя
+//        $user = User::factory()->create([
+//            'name' => 'Test User',
+//            'email' => 'test@example.com',
+//            'role' => 'admin', // Вот тут сразу задаём роль!
+//        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Это назначит роль уже существующему пользователю (например, с id=1)
+        $user = \App\Models\User::find(1);
+        if ($user) {
+            $user->role = 'admin';
+            $user->save();
+        }
+
+        // Если хочешь назначать роль уже существующему пользователю:
+        // $user = User::find(1);
+        // $user->role = 'admin';
+        // $user->save();
     }
+
 }

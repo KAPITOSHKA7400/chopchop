@@ -4,8 +4,8 @@
        class="px-4 py-2 rounded {{ request()->is('dashboard') ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100' }}">
         Боты
     </a>
-    <a href="{{ url('/chats') }}"
-       class="px-4 py-2 rounded {{ request()->is('chats') ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100' }}">
+    <a href="{{ route('dashboard.chats') }}"
+       class="px-4 py-2 rounded {{ request()->is('dashboard/chats') ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100' }}">
         Чаты
     </a>
 

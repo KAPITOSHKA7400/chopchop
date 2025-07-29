@@ -3,53 +3,40 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ChatController; // Добавь этот контроллер
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Группа для dashboard — защищена middleware 'auth'
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/', [DashboardController::class, 'store']);
+    Route::delete('/bot/{bot}', [DashboardController::class, 'destroy'])->name('bot.destroy');
 
-Route::middleware('auth')->group(function () {
+    // Страница чатов
+    Route::get('/chats', [ChatController::class, 'index'])->name('dashboard.chats');
+    // Если нужно будет добавлять чаты — тут же POST, DELETE и т.д.
+});
+
+// Остальные страницы профиля и настроек
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/statistics', function () {
+        return view('statistics');
+    });
+
+    Route::get('/security', function () {
+        return view('security');
+    });
+
+    Route::get('/faq', function () {
+        return view('faq');
+    });
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard')->middleware(['auth']);
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/dashboard', [DashboardController::class, 'store']);
-    Route::delete('/dashboard/bot/{bot}', [DashboardController::class, 'destroy'])->name('bot.destroy');
-});
-
-
-Route::get('/chats', function () {
-    return view('chats');
-})->middleware(['auth']);
-
-// Остальные страницы для Настроек по желанию
-Route::get('/profile', function () {
-    return view('profile');
-})->middleware(['auth']);
-
-Route::get('/statistics', function () {
-    return view('statistics');
-})->middleware(['auth']);
-
-Route::get('/security', function () {
-    return view('security');
-})->middleware(['auth']);
-
-Route::get('/faq', function () {
-    return view('faq');
-})->middleware(['auth']);
-
-
 
 require __DIR__.'/auth.php';
