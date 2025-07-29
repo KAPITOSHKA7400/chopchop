@@ -15,6 +15,8 @@ class Bot extends Model
         'bot_name',
         'bot_username',
         'is_active',
+        'owner_id', // ← добавить обязательно!
+        'invite_code', // если есть
     ];
 
     protected $casts = [
@@ -24,5 +26,15 @@ class Bot extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function operators()
+    {
+        return $this->belongsToMany(User::class, 'bot_user', 'bot_id', 'user_id');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'owner_id');
     }
 }

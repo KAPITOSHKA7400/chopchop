@@ -10,7 +10,17 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $bots = Bot::where('user_id', Auth::id())->get();
+        $user = Auth::user();
+
+        // Боты, где пользователь владелец
+        $ownedBots = Bot::where('user_id', $user->id)->get();
+
+        // Боты, где пользователь оператор (через bot_user)
+        $operatedBots = $user->operatedBots()->get(); // нужна связь в User!
+
+        // Мержим коллекции и убираем дубликаты (по id)
+        $bots = $ownedBots->merge($operatedBots)->unique('id');
+
         return view('dashboard', compact('bots'));
     }
 
@@ -35,12 +45,13 @@ class DashboardController extends Controller
             'bot_name'     => $request->bot_name,
             'bot_username' => $data['result']['username'],
             'is_active'    => true,
+            'owner_id'     => Auth::id(),
         ]);
 
         return redirect()->route('dashboard');
     }
 
-    public function destroy(\App\Models\Bot $bot)
+    public function destroy(Bot $bot)
     {
         // Только владелец может удалить!
         if ($bot->user_id !== auth()->id()) {

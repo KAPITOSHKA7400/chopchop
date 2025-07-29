@@ -55,5 +55,7 @@
         document.documentElement.classList.add('dark');
     }
 </script>
+
+@stack('scripts')
 </body>
 </html>

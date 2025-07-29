@@ -64,4 +64,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // app/Models/User.php
+    public function operatedBots()
+    {
+        return $this->belongsToMany(\App\Models\Bot::class, 'bot_user', 'user_id', 'bot_id');
+    }
 }
