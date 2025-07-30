@@ -9,32 +9,42 @@ class Bot extends Model
 {
     use HasFactory;
 
+    // Явно указываем таблицу (можно не указывать, если имя bots)
+    protected $table = 'bots';
+
     protected $fillable = [
         'user_id',
         'bot_token',
         'bot_name',
         'bot_username',
         'is_active',
-        'owner_id', // ← добавить обязательно!
-        'invite_code', // если есть
+        'owner_id',
+        'invite_code',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    public function user()
+    // Владелец бота
+    public function owner()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
+    // Автор (создатель бота)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Операторы (связанные пользователи через bot_user)
     public function operators()
     {
         return $this->belongsToMany(User::class, 'bot_user', 'bot_id', 'user_id');
-    }
-
-    public function owner()
-    {
-        return $this->belongsTo(\App\Models\User::class, 'owner_id');
     }
 }

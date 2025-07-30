@@ -56,6 +56,37 @@
     }
 </script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function refreshSidebar() {
+        $.get('{{ route("dashboard.chats.list") }}', function(data) {
+            $('#sidebar-chats').html(data);
+        });
+    }
+
+    function refreshMessages() {
+        const chatId = '{{ request("chat_id") }}';
+        const botId = '{{ request("bot_id") }}';
+
+        if (!chatId || !botId) return;
+
+        $.get('{{ route("dashboard.chats.messages") }}', { chat_id: chatId, bot_id: botId }, function(data) {
+            $('#chat-messages').html(data);
+        });
+    }
+
+    // Первичная загрузка
+    refreshSidebar();
+    refreshMessages();
+
+    // Обновление каждые 10 секунд
+    setInterval(() => {
+        refreshSidebar();
+        refreshMessages();
+    }, 10000);
+</script>
+
+
 @stack('scripts')
 </body>
 </html>
